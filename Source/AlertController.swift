@@ -129,8 +129,17 @@ public final class AlertController: UIViewController {
     public let preferredStyle: AlertControllerStyle
 
     private let alert: UIView & AlertControllerViewRepresentable
-    private lazy var transitionDelegate: Transition = Transition(alertStyle: self.preferredStyle)
+    private lazy var transitionDelegate: Transition = Transition(alertStyle: self.preferredStyle, backgroundAlpha: 0.4)
 
+    /// can be from 0 to 1
+    @objc
+    public var backgroundAlpha: CGFloat {
+        get { transitionDelegate.backgroundAlpha }
+        set {
+            self.transitionDelegate = Transition(alertStyle: self.preferredStyle, backgroundAlpha: newValue)
+            self.transitioningDelegate = self.transitionDelegate
+        }
+    }
     // MARK: - Initialization
 
     /// Create an alert with an stylized title and message. If no styles are necessary, consider using

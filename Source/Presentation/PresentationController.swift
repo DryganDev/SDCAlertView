@@ -4,11 +4,16 @@ class PresentationController: UIPresentationController {
 
     private let dimmingView = UIView()
 
-    override init(presentedViewController: UIViewController,
-                  presenting presentingViewController: UIViewController?)
-    {
+//    override init(presentedViewController: UIViewController,
+//                  presenting presentingViewController: UIViewController?)
+//    {
+//        super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
+//        self.dimmingView.backgroundColor = UIColor(white: 0, alpha: 0.4)
+//    }
+    
+    init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?, backgroundAlpha: CGFloat) {
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
-        self.dimmingView.backgroundColor = UIColor(white: 0, alpha: 0.4)
+        self.dimmingView.backgroundColor = UIColor(white: 0, alpha: backgroundAlpha)
     }
 
     override func presentationTransitionWillBegin() {
