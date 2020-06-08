@@ -146,11 +146,11 @@ open class AlertVisualStyle: NSObject {
     
     // add or remove blur effect to cancel section in `.actionSheet` style
     @objc
-    var isBlurEffectInCancelLabelEnable = false
+    public var isBlurEffectInCancelLabelEnable = false
     
     // add or remove blur effect to action section in `.actionSheet` style
     @objc
-    var isBlurEffectInActionsEnable = false
+    public var isBlurEffectInActionsEnable = false
 
     /// The style of the alert.
     private let alertStyle: AlertControllerStyle
