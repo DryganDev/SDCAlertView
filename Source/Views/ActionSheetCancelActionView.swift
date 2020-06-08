@@ -1,7 +1,7 @@
 import UIKit
 
 final class ActionSheetCancelActionView: UIView {
-    private let blurBackground = PassthroughEffectView()
+    private lazy var blurBackground = PassthroughEffectView()
     private let cancelButton = UIButton(type: .custom)
     private let cancelLabel = UILabel()
     private var action: AlertAction!
@@ -30,8 +30,10 @@ final class ActionSheetCancelActionView: UIView {
 
         self.layer.cornerRadius = visualStyle.cornerRadius
         self.layer.masksToBounds = true
-
-        self.addBlurBackground(effect: visualStyle.blurEffect)
+        
+        if visualStyle.isBlurEffectInCancelLabelEnable {
+           self.addBlurBackground(effect: visualStyle.blurEffect)
+        }
         self.addCancelButton(action: cancelAction, visualStyle: visualStyle)
     }
 
@@ -71,7 +73,9 @@ final class ActionSheetCancelActionView: UIView {
             // Move the blur over the button to ensure color consistency with the rest of the action sheet but
             // underneath the label to avoid blurring the label. The blur passes through touches so the button
             // can still be tapped.
-            self.bringSubviewToFront(self.blurBackground)
+            if visualStyle.isBlurEffectInCancelLabelEnable {
+                self.bringSubviewToFront(self.blurBackground)
+            }
         }
 
         self.cancelLabel.translatesAutoresizingMaskIntoConstraints = false

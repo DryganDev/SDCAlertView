@@ -34,27 +34,45 @@ final class ActionSheetPrimaryView: UIView {
 
     func buildView(actions: [AlertAction], contentView: UIView, visualStyle: AlertVisualStyle) {
         self.configure(visualStyle: visualStyle)
+        if visualStyle.isBlurEffectInActionsEnable {
+            let backgroundBlur = self.buildBackgroundBlur(effect: visualStyle.blurEffect)
+            let labelVibrancy = self.buildLabelVibrancy(effect: visualStyle.blurEffect)
+            let contentContainer = UIView()
+            contentContainer.translatesAutoresizingMaskIntoConstraints = false
 
-        let backgroundBlur = self.buildBackgroundBlur(effect: visualStyle.blurEffect)
-        let labelVibrancy = self.buildLabelVibrancy(effect: visualStyle.blurEffect)
-        let contentContainer = UIView()
-        contentContainer.translatesAutoresizingMaskIntoConstraints = false
+            let stackView = self.buildStackView(views: [labelVibrancy, contentContainer, self.actionsView],
+                                                in: backgroundBlur)
+            self.buildLabelsView(in: labelVibrancy)
+            self.buildContentView(contentView, in: contentContainer, visualStyle: visualStyle)
+            self.buildActionsView(self.actionsView, actions: actions, visualStyle: visualStyle)
 
-        let stackView = self.buildStackView(views: [labelVibrancy, contentContainer, self.actionsView],
-                                            in: backgroundBlur)
-        self.buildLabelsView(in: labelVibrancy)
-        self.buildContentView(contentView, in: contentContainer, visualStyle: visualStyle)
-        self.buildActionsView(self.actionsView, actions: actions, visualStyle: visualStyle)
+            let padding = visualStyle.contentPadding.left + visualStyle.contentPadding.right
+            NSLayoutConstraint.activate([
+                self.titleLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: -padding),
 
-        let padding = visualStyle.contentPadding.left + visualStyle.contentPadding.right
-        NSLayoutConstraint.activate([
-            self.titleLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: -padding),
-
-            backgroundBlur.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            backgroundBlur.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            backgroundBlur.topAnchor.constraint(equalTo: self.topAnchor),
-            backgroundBlur.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-        ])
+                backgroundBlur.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                backgroundBlur.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+                backgroundBlur.topAnchor.constraint(equalTo: self.topAnchor),
+                backgroundBlur.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            ])
+        } else {
+            let contentContainer = UIView()
+            contentContainer.translatesAutoresizingMaskIntoConstraints = false
+            
+            let stackView = self.buildStackView(views: [contentContainer, self.actionsView])
+            
+            self.buildContentView(contentView, in: contentContainer, visualStyle: visualStyle)
+            self.buildActionsView(self.actionsView, actions: actions, visualStyle: visualStyle)
+            let padding = visualStyle.contentPadding.left + visualStyle.contentPadding.right
+            NSLayoutConstraint.activate([
+                self.titleLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: -padding),
+                
+                stackView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+                stackView.topAnchor.constraint(equalTo: self.topAnchor),
+                stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            ])
+        }
     }
 
     private func configure(visualStyle: AlertVisualStyle) {
@@ -104,6 +122,25 @@ final class ActionSheetPrimaryView: UIView {
             stackView.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
         ])
 
+        return stackView
+    }
+    
+    private func buildStackView(views: [UIView]) -> UIStackView {
+        let stackView = UIStackView(arrangedSubviews: views)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        
+        addSubview(stackView)
+        
+        // Skip aligning labels, they're aligned separately as they have to account for padding
+        for view in views[1...] {
+            NSLayoutConstraint.activate([
+                stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            ])
+        }
+        
         return stackView
     }
 
